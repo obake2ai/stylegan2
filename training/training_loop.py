@@ -149,11 +149,13 @@ def training_loop(
             G = tflib.Network('G', num_channels=training_set.shape[0], resolution=training_set.shape[1], label_size=training_set.label_size, **G_args)
             D = tflib.Network('D', num_channels=training_set.shape[0], resolution=training_set.shape[1], label_size=training_set.label_size, **D_args)
             Gs = G.clone('Gs')
+            Df = tflib.MTCNN('./mtcnn.pb')
         if resume_pkl is not None:
             print('Loading networks from "%s"...' % resume_pkl)
             rG, rD, rGs = misc.load_pkl(resume_pkl)
             if resume_with_new_nets: G.copy_vars_from(rG); D.copy_vars_from(rD); Gs.copy_vars_from(rGs)
             else: G = rG; D = rD; Gs = rGs
+            Df = tflib.MTCNN('./mtcnn.pb')
 
     # Print layers and generate initial image snapshot.
     G.print_layers(); D.print_layers()
@@ -196,6 +198,7 @@ def training_loop(
             # Create GPU-specific shadow copies of G and D.
             G_gpu = G if gpu == 0 else G.clone(G.name + '_shadow')
             D_gpu = D if gpu == 0 else D.clone(D.name + '_shadow')
+            Df_gpu = Df
 
             # Fetch training data via temporary variables.
             with tf.name_scope('DataFetch'):
@@ -217,7 +220,7 @@ def training_loop(
             if 'lod' in D_gpu.vars: lod_assign_ops += [tf.assign(D_gpu.vars['lod'], lod_in)]
             with tf.control_dependencies(lod_assign_ops):
                 with tf.name_scope('G_loss'):
-                    G_loss, G_reg = dnnlib.util.call_func_by_name(G=G_gpu, D=D_gpu, opt=G_opt, training_set=training_set, minibatch_size=minibatch_gpu_in, **G_loss_args)
+                    G_loss, G_reg = dnnlib.util.call_func_by_name(G=G_gpu, D=D_gpu, Df=Df_gpu, opt=G_opt, training_set=training_set, minibatch_size=minibatch_gpu_in, **G_loss_args)
                 with tf.name_scope('D_loss'):
                     D_loss, D_reg = dnnlib.util.call_func_by_name(G=G_gpu, D=D_gpu, opt=D_opt, training_set=training_set, minibatch_size=minibatch_gpu_in, reals=reals_read, labels=labels_read, **D_loss_args)
 

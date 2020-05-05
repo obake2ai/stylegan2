@@ -709,7 +709,7 @@ def D_face(
     fmap_decay          = 1.0,          # log2 feature map reduction when doubling the resolution.
     fmap_min            = 1,            # Minimum number of feature maps in any layer.
     fmap_max            = 512,          # Maximum number of feature maps in any layer.
-    architecture        = 'resnet',     # Architecture: 'orig', 'skip', 'resnet'.
+    architecture        = 'mtcnn',     # Architecture: 'orig', 'skip', 'resnet'.
     nonlinearity        = 'lrelu',      # Activation function: 'relu', 'lrelu', etc.
     mbstd_group_size    = 4,            # Group size for the minibatch standard deviation layer, 0 = disable.
     mbstd_num_features  = 1,            # Number of features for the minibatch standard deviation layer.
@@ -720,7 +720,7 @@ def D_face(
     resolution_log2 = int(np.log2(resolution))
     assert resolution == 2**resolution_log2 and resolution >= 4
     def nf(stage): return np.clip(int(fmap_base / (2.0 ** (stage * fmap_decay))), fmap_min, fmap_max)
-    assert architecture in ['orig', 'skip', 'resnet']
+    assert architecture in ['resnet']
     act = nonlinearity
 
     images_in.set_shape([None, num_channels, resolution, resolution])
@@ -782,5 +782,4 @@ def D_face(
     assert scores_out.dtype == tf.as_dtype(dtype)
     scores_out = tf.identity(scores_out, name='scores_out')
     return scores_out
-
 #----------------------------------------------------------------------------
