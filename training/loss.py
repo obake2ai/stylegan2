@@ -220,7 +220,7 @@ def get_faces_score(images):
 
     return face_score
 
-def G_logistic_ns_pathreg_face(G, D, Df, opt, training_set, minibatch_size, pl_minibatch_shrink=2, pl_decay=0.01, pl_weight=2.0):
+def G_logistic_ns_pathreg_face(G, D, opt, training_set, minibatch_size, pl_minibatch_shrink=2, pl_decay=0.01, pl_weight=2.0):
     _ = opt
     latents = tf.random_normal([minibatch_size] + G.input_shapes[0][1:])
     labels = training_set.get_random_labels_tf(minibatch_size)

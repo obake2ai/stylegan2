@@ -14,6 +14,8 @@ from dnnlib import EasyDict
 
 from metrics.metric_defaults import metric_defaults
 
+from training import misc
+
 #----------------------------------------------------------------------------
 
 _valid_configs = [
@@ -33,18 +35,24 @@ _valid_configs = [
 
 #----------------------------------------------------------------------------
 
-def run(dataset, data_dir, result_dir, config_id, num_gpus, total_kimg, gamma, mirror_augment, metrics):
+def run(dataset, data_dir, result_dir, config_id, num_gpus, total_kimg, gamma, mirror_augment, metrics, resume_id):
     train     = EasyDict(run_func_name='training.training_loop.training_loop') # Options for training loop.
     G         = EasyDict(func_name='training.networks_stylegan2.G_main')       # Options for generator network.
     D         = EasyDict(func_name='training.networks_stylegan2.D_stylegan2')  # Options for discriminator network.
     G_opt     = EasyDict(beta1=0.0, beta2=0.99, epsilon=1e-8)                  # Options for generator optimizer.
     D_opt     = EasyDict(beta1=0.0, beta2=0.99, epsilon=1e-8)                  # Options for discriminator optimizer.
-    G_loss    = EasyDict(func_name='training.loss.G_logistic_ns_pathreg')      # Options for generator loss.
+    G_loss    = EasyDict(func_name='training.loss.G_logistic_ns_pathreg_face')      # Options for generator loss.
     D_loss    = EasyDict(func_name='training.loss.D_logistic_r1')              # Options for discriminator loss.
     sched     = EasyDict()                                                     # Options for TrainingSchedule.
     grid      = EasyDict(size='8k', layout='random')                           # Options for setup_snapshot_image_grid().
     sc        = dnnlib.SubmitConfig()                                          # Options for dnnlib.submit_run().
     tf_config = {'rnd.np_random_seed': 1000}                                   # Options for tflib.init_tf().
+
+    train.resume_pkl = misc.locate_network_pkl(resume_id, None)
+    # train.resume_pkl = './results/00132-stylegan2-11_12-1gpu-config-f/network-snapshot-015041.pkl'
+    train.resume_kimg = int(os.path.basename(train.resume_pkl).split('.')[0].split('-')[2])
+    train.image_snapshot_ticks    = 1,       # How often to save image snapshots? None = only save 'reals.png' and 'fakes-init.png'.
+    train.network_snapshot_ticks  = 1,       # How often to save network snapshots? None = only save 'networks-final.pkl'.
 
     train.data_dir = data_dir
     train.total_kimg = total_kimg
@@ -168,6 +176,7 @@ def main():
     parser.add_argument('--gamma', help='R1 regularization weight (default is config dependent)', default=None, type=float)
     parser.add_argument('--mirror-augment', help='Mirror augment (default: %(default)s)', default=False, metavar='BOOL', type=_str_to_bool)
     parser.add_argument('--metrics', help='Comma-separated list of metrics or "none" (default: %(default)s)', default='fid50k', type=_parse_comma_sep)
+    parser.add_argument('--resume_id', help='Specify id if you want to resume training (default: %(default)s)', default=0, type=int)
 
     args = parser.parse_args()
 
@@ -192,4 +201,3 @@ if __name__ == "__main__":
     main()
 
 #----------------------------------------------------------------------------
-
