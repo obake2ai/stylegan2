@@ -218,7 +218,7 @@ def get_faces_score(images):
       elif len(faces)==1:
         face_score += float(faces[0]['confidence'])/images.shape[0]
 
-    return face_score
+    return float(face_score)
 
 def G_logistic_ns_pathreg_face(G, D, opt, training_set, minibatch_size, pl_minibatch_shrink=2, pl_decay=0.01, pl_weight=2.0):
     _ = opt
