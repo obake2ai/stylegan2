@@ -203,6 +203,7 @@ import itertools
 
 def get_faces_score(images):
     # face detection with mtcnn on a photograph
+    print (type(idx))
     detector = MTCNN()
     faces_list = []
     face_score = 0
