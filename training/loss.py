@@ -196,6 +196,20 @@ def G_logistic_ns_pathreg(G, D, opt, training_set, minibatch_size, pl_minibatch_
 
 #----------------------------------------------------------------------------
 # Added by Yuma kishi
+def get_faces_score(Df, images):
+    process_size = 224
+    images = images.resize((images.shape[0],process_size,process_size,images.shape[3])).astype(np.float32)
+    total_score = 0
+
+    for idx in range(images.shape[0]):
+      prob, _, _ = Df.detect(images[idx])
+      if len(prob)>1:
+          for idx2 in range(len(prob)):
+              total_score += float(prob[idx2])/images.shape[0]/len(prob)
+      elif len(prob)==1:
+          total_score += float(prob[0])/images.shape[0]
+
+    return float(total_score)
 
 def G_logistic_ns_pathreg_face(G, D, Df, opt, training_set, minibatch_size, pl_minibatch_shrink=2, pl_decay=0.01, pl_weight=2.0):
     _ = opt
@@ -203,7 +217,7 @@ def G_logistic_ns_pathreg_face(G, D, Df, opt, training_set, minibatch_size, pl_m
     labels = training_set.get_random_labels_tf(minibatch_size)
     fake_images_out, fake_dlatents_out = G.get_output_for(latents, labels, is_training=True, return_dlatents=True)
     fake_scores_out = D.get_output_for(fake_images_out, labels, is_training=True)
-    fake_faces_out = Df.get_faces_score(fake_images_out)
+    fake_faces_out = get_faces_score(Df, fake_images_out)
     print ('fake_scores_out : %f, fake_faces_out : %f' %(fake_scores_out,fake_faces_out))
     loss = tf.nn.softplus(-fake_scores_out+fake_faces_out) # -log(sigmoid(fake_scores_out))
 

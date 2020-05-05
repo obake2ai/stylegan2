@@ -11,7 +11,7 @@ from . import tfutil
 from . import custom_ops
 
 from .tfutil import *
-from .network import Network
+from .network import Network, MTCNN
 
 from .optimizer import Optimizer
 
