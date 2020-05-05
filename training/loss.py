@@ -197,8 +197,8 @@ def G_logistic_ns_pathreg(G, D, opt, training_set, minibatch_size, pl_minibatch_
 #----------------------------------------------------------------------------
 # Added by Yuma kishi
 def get_faces_score(Df, images):
-    process_size = 224
-    images = images.resize((images.shape[0],process_size,process_size,images.shape[3])).astype(np.float32)
+    # process_size = 224
+    # images = images.resize((images.shape[0],process_size,process_size,images.shape[3])).astype(np.float32)
     total_score = 0
 
     for idx in range(images.shape[0]):
