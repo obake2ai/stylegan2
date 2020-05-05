@@ -207,8 +207,7 @@ def get_faces_score(images):
     faces_list = []
     face_score = 0
     process_size = 224
-    print (type(images))
-    images_resized = images.resize((images.shape[0],process_size,process_size,images.shape[3]))
+    images = images.resize((images.shape[0],process_size,process_size,images.shape[3])).astype(np.float64)
 
     for idx in range(images.shape[0]):
       faces = detector.detect_faces(images[idx])
