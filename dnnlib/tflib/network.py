@@ -614,13 +614,13 @@ class MTCNN:
     def detect(self, img):
         feeds = {
             self.graph.get_operation_by_name('input').outputs: img,
-            self.graph.get_operation_by_name('min_size').outputs[0]: self.min_size,
-            self.graph.get_operation_by_name('thresholds').outputs[0]: self.thresholds,
-            self.graph.get_operation_by_name('factor').outputs[0]: self.factor
+            self.graph.get_operation_by_name('min_size').outputs: self.min_size,
+            self.graph.get_operation_by_name('thresholds').outputs: self.thresholds,
+            self.graph.get_operation_by_name('factor').outputs: self.factor
         }
-        fetches = [self.graph.get_operation_by_name('prob').outputs[0],
-                  self.graph.get_operation_by_name('landmarks').outputs[0],
-                  self.graph.get_operation_by_name('box').outputs[0]]
+        fetches = [self.graph.get_operation_by_name('prob').outputs,
+                  self.graph.get_operation_by_name('landmarks').outputs,
+                  self.graph.get_operation_by_name('box').outputs]
         prob, landmarks, box = self.sess.run(fetches, feeds)
         return prob, box, landmarks
 
