@@ -613,7 +613,7 @@ class MTCNN:
 
     def detect(self, img):
         feeds = {
-            self.graph.get_operation_by_name('input').outputs[0]: img,
+            self.graph.get_operation_by_name('input').outputs: img,
             self.graph.get_operation_by_name('min_size').outputs[0]: self.min_size,
             self.graph.get_operation_by_name('thresholds').outputs[0]: self.thresholds,
             self.graph.get_operation_by_name('factor').outputs[0]: self.factor
