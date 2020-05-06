@@ -201,7 +201,7 @@ def get_faces_score(Df, images):
     # images = images.resize((images.shape[0],process_size,process_size,images.shape[3])).astype(np.float32)
     total_score = 0
     print (type(images))
-    prob, _, _ = Df.detect(images)
+    prob, _, _ = Df.detect(tf.transpose(images, perm=[0, 2, 3, 1]))
     # for idx in range(images.shape[0]):
     #   prob, _, _ = Df.detect(images[idx])
     #   if len(prob)>1:
