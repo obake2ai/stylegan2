@@ -212,7 +212,7 @@ def get_faces_score(Df, images):
     #   elif len(prob)==1:
     #       total_score += float(prob[0])/images.shape[0]
 
-    return float(total_score)
+    return tf.convert_to_tensor(total_score, np.float32)
 
 def G_logistic_ns_pathreg_face(G, D, Df, opt, training_set, minibatch_size, pl_minibatch_shrink=2, pl_decay=0.01, pl_weight=2.0):
     _ = opt
