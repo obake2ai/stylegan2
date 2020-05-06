@@ -202,8 +202,9 @@ def get_faces_score(Df, images):
     total_score = 0
     input_image = tf.transpose(tf.reshape(tf.slice(images, [0,0,0,0], [1,-1,-1,-1]), images.get_shape()[1:]), perm=[1, 2, 0])
     with tf.Session() as sess2:
-        input_data = tf.placeholder(tf.int32)
-        prob, _, _ = sess2.run(Df.detect(input_data), feed_dict={input_data: input_image})
+        print (type(images))
+        input_data = sess2.run(input_image, feed_dict={images: images})
+        prob, _, _ = Df.detect(input_data)
     total_score += prob
     # for idx in range(images.shape[0]):
     #   prob, _, _ = Df.detect(images[idx])
