@@ -200,7 +200,7 @@ def get_faces_score(Df, images):
     # process_size = 224
     # images = images.resize((images.shape[0],process_size,process_size,images.shape[3])).astype(np.float32)
     total_score = 0
-
+    print (type(images))
     prob, _, _ = Df.detect(images)
     # for idx in range(images.shape[0]):
     #   prob, _, _ = Df.detect(images[idx])
