@@ -203,7 +203,7 @@ def get_faces_score(Df, images):
     samples = tf.placeholder(dtype=tf.int32, shape=None)
     input_image = tf.transpose(tf.reshape(tf.slice(samples, [0,0,0,0], [1,-1,-1,-1]), samples.get_shape()[1:]), perm=[1, 2, 0])
     with tf.Session() as sessl:
-        prob, _, _ = Df.detect(sessl.run(input_image, feed_dict={samples: images)}))
+        prob, _, _ = Df.detect(sessl.run(input_image, feed_dict={samples: images}))
     # prob, _, _ = Df.detect(input_image)
     total_score += prob
     # for idx in range(images.shape[0]):
