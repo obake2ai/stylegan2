@@ -201,10 +201,8 @@ def get_faces_score(Df, images):
     # images = images.resize((images.shape[0],process_size,process_size,images.shape[3])).astype(np.float32)
     total_score = 0
     input_image = tf.transpose(tf.reshape(tf.slice(images, [0,0,0,0], [1,-1,-1,-1]), images.get_shape()[1:]), perm=[1, 2, 0])
-    with tf.Session() as sess2:
-        print (type(images))
-        input_data = sess2.run(input_image, feed_dict={images: images})
-        prob, _, _ = Df.detect(input_data)
+    with tf.Session() as sess:
+        prob, _, _ = Df.detect(sess.run(input_image))
     total_score += prob
     # for idx in range(images.shape[0]):
     #   prob, _, _ = Df.detect(images[idx])
@@ -214,7 +212,7 @@ def get_faces_score(Df, images):
     #   elif len(prob)==1:
     #       total_score += float(prob[0])/images.shape[0]
 
-    return tf.convert_to_tensor(total_score, np.float32)
+    return tf.convert_to_tensor(data_np, np.float32)
 
 def G_logistic_ns_pathreg_face(G, D, Df, opt, training_set, minibatch_size, pl_minibatch_shrink=2, pl_decay=0.01, pl_weight=2.0):
     _ = opt
